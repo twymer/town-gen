@@ -1,5 +1,6 @@
 int gridScale = 10;
-int cols, rows;
+int cols = 30;
+int rows = 30;
 ArrayList<Building> buildings;
 
 
@@ -9,6 +10,19 @@ class Building {
   float userImportance;
   float townImportance;
   int xPos, yPos;
+  
+  void setXPos(int newPos) {
+    xPos = newPos;
+  }
+  
+  void setYPos(int newPos) {
+    yPos = newPos;
+  }
+  
+  void setPos(int x, int y) {
+    xPos = x;
+    yPos = y;
+  }
   
   Building(String n, int x, int y, float user, float town) {
     name = n;
@@ -20,15 +34,16 @@ class Building {
 }
 
 void setup() {
-  size(500, 500);
+  size(cols * gridScale, rows * gridScale);
 
-  cols = width/gridScale;
-  rows = height/gridScale;
-  
   buildings = new ArrayList<Building>();
   buildings.add(new Building("Armory", 4, 4, 1, .5));
+  buildings.get(buildings.size() - 1).setPos(2, 2);
   buildings.add(new Building("Alchemist", 3, 3, 1, .2));
+  buildings.get(buildings.size() - 1).setPos(20, 2);
   buildings.add(new Building("General Store", 3, 3, .8, 1));
+  buildings.get(buildings.size() - 1).setPos(2, 20);
+
 }
 
 void drawGrid() {
@@ -48,7 +63,7 @@ void drawGrid() {
 void drawBuilding(Building b) {
   fill(0);
   noStroke();
-  rect(0, 0, b.xSize * gridScale, b.ySize * gridScale);
+  rect(b.xPos * gridScale, b.yPos * gridScale, b.xSize * gridScale, b.ySize * gridScale);
 }
 
 void drawBuildings() {
