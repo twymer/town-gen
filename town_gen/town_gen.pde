@@ -73,8 +73,28 @@ class Node {
 class ExtenderAgent {
   int xPos, yPos;
 
+  // Count how any pixels of road are in the square surrounding
+  private int roadCountInRange(int squareRadius) {
+    int count = 0;
+    for (int i = -squareRadius; i < squareRadius; i++) {
+      for (int j = -squareRadius; j < squareRadius; j++) {
+        if (i + xPos > 0 && i + xPos < cols &&
+            j + yPos > 0 && j + yPos < rows &&
+            world[i + xPos][j + yPos] == ROAD) {
+          count++;
+        }
+      }
+    }
+
+    return count;
+  }
+
   private boolean useRoadSegment(ArrayList<PVector> path) {
     if (path == null) { 
+      return false;
+    }
+    
+    if (roadCountInRange(maxExtenderDistance) > 3) {
       return false;
     }
 
@@ -87,25 +107,19 @@ class ExtenderAgent {
     if (useRoadSegment(result)) {
       addRoad(result);
     }
-    
-    xPos = int(random(0, cols));
-    yPos = int(random(0, rows));
+
+    int xDir = round(random(-1, 1));
+    int yDir = round(random(-1, 1));
+
+    xPos += xDir;
+    yPos += yDir;
   }
-    //    xPos++;
-    //    if (xPos >= cols) {
-    //      xPos = 0;
-    //      yPos++;
-    //    }
-    //    if (yPos >= rows) {
-    //      yPos = 0;
-    //    }
-    //  }
 
   ExtenderAgent() {
-    xPos = 25;
-    yPos = 45;
-    //xPos = int(cols / 2);
-    //yPos = int(rows / 2);
+    //xPos = 25;
+    //yPos = 45;
+    xPos = int(cols / 2);
+    yPos = int(rows / 2);
   }
 }
 
@@ -149,7 +163,7 @@ ArrayList<PVector> findClosestRoad(int x, int y) {
         drawBox(neighbor);
         openNodes.add(new Node(neighbor, current, current.depth + 1));
         openSet.add(neighbor);
-      } 
+      }
     }
   }
 
