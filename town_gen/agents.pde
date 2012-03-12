@@ -22,8 +22,11 @@ class ConnectorAgent extends Agent {
 
   private PVector findNearbyRoadSegment() {
     noFill();
+    stroke(0, 55);
     rect((-connectorDistance + xPos) * gridScale, (-connectorDistance + yPos) * gridScale, 
           2 * connectorDistance * gridScale, 2 * connectorDistance * gridScale);
+    
+    // Collect nearby road segments and shuffle them      
     ArrayList<PVector> nearbyRoads = new ArrayList<PVector>();
     for (int i = -connectorDistance; i < connectorDistance; i++) {
       for (int j = -connectorDistance; j < connectorDistance; j++) {
@@ -37,6 +40,8 @@ class ConnectorAgent extends Agent {
     Collections.shuffle(nearbyRoads);
 
     if (nearbyRoads.size() > 0) {
+      noFill();
+      stroke(0);
       line(xPos * gridScale, yPos * gridScale, nearbyRoads.get(0).x * gridScale, nearbyRoads.get(0).y * gridScale);
       return nearbyRoads.get(0);
     } 

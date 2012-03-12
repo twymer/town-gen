@@ -6,13 +6,20 @@ int rows = 100;
 ArrayList<Building> buildings;
 int world[][] = new int[cols][rows];
 ExtenderAgent extender = new ExtenderAgent();
+ExtenderAgent extender2 = new ExtenderAgent();
+ExtenderAgent extender3 = new ExtenderAgent();
+
 ConnectorAgent connector = new ConnectorAgent();
+ConnectorAgent connector2 = new ConnectorAgent();
+ConnectorAgent connector3 = new ConnectorAgent();
+ConnectorAgent connector4 = new ConnectorAgent();
 
 int roadServicedDistance = 5;
 int maxExtenderDistance = 10;
 int connectorDistance = 10;
 
 boolean extend = true;
+boolean multipleAgents = true;
 
 // No enums in processing
 public static final int EMPTY = 0;
@@ -87,7 +94,7 @@ void drawWorld() {
       if (world[i][j] != EMPTY) {
         int x = i*gridScale;
         int y = j*gridScale;
-        
+
         if (world[i][j] == ROAD) {
           fill(0);
           stroke(0, 40);
@@ -96,7 +103,7 @@ void drawWorld() {
           fill(255, 200, 200);
           stroke(0, 80);
         }
-        
+
         rect(x, y, gridScale, gridScale);
       }
     }
@@ -114,9 +121,16 @@ void draw() {
 
   drawWorld();
 
-  if(extend) {
+  if (extend) {
     extender.update();
+    connector.update();
+    if (multipleAgents) {
+      extender2.update();
+      extender3.update();
+      connector2.update();
+      connector3.update();
+      connector4.update();
+    }
   }
-  connector.update();
 }
 
