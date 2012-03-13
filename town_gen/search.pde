@@ -1,4 +1,7 @@
 abstract class Search {
+  // Flag to disable drawing of BFS
+  private boolean drawSearch = false;
+
   private ArrayList<PVector> tracePath(Node finalNode) {
     ArrayList<PVector> path = new ArrayList<PVector>();
 
@@ -36,10 +39,11 @@ abstract class Search {
 
       for (PVector neighbor : current.neighbors()) {
         if (!openSet.contains(neighbor) && !closedSet.contains(neighbor) && validNeighbor(neighbor)) {
-          //println("Added neighbor: " + neighbor);
-          fill(0, 255, 0, 50);
-          stroke(0);
-          drawBox(neighbor);
+          if (drawSearch) {
+            fill(0, 255, 0, 50);
+            stroke(0);
+            drawBox(neighbor);
+          }
           openNodes.add(new Node(neighbor, current, current.depth + 1));
           openSet.add(neighbor);
         }
@@ -79,8 +83,19 @@ class FindGoal extends Search {
   boolean goalReached(Node current, PVector goal) {
     return current.pos.x == goal.x && current.pos.y == goal.y;
   }
-  
+
   boolean validNeighbor(PVector potentialNeighbor) {
     return world[int(potentialNeighbor.x)][int(potentialNeighbor.y)] != BUILDING;
   }
 }
+
+class FindNearestDevelopment extends Search {
+  boolean goalReached(Node current, PVector goal) {
+    return world[int(current.pos.x)][int(current.pos.y)] == BUILDING;
+  }
+
+  boolean validNeighbor(PVector potentialNeighbor) {
+    return true;
+  }
+}
+

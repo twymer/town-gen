@@ -3,23 +3,36 @@ import java.util.Queue;
 int gridScale = 5;
 int cols = 100;
 int rows = 100;
+
+int startX = int(cols / 2);
+int startY = int(rows / 2);
+
 ArrayList<Building> buildings;
 int world[][] = new int[cols][rows];
-ExtenderAgent extender = new ExtenderAgent();
-ExtenderAgent extender2 = new ExtenderAgent();
-ExtenderAgent extender3 = new ExtenderAgent();
 
-ConnectorAgent connector = new ConnectorAgent();
-ConnectorAgent connector2 = new ConnectorAgent();
-ConnectorAgent connector3 = new ConnectorAgent();
-ConnectorAgent connector4 = new ConnectorAgent();
+Agent extender = new ExtenderAgent();
+Agent extender2 = new ExtenderAgent();
+Agent extender3 = new ExtenderAgent();
 
+Agent connector = new ConnectorAgent();
+Agent connector2 = new ConnectorAgent();
+Agent connector3 = new ConnectorAgent();
+Agent connector4 = new ConnectorAgent();
+
+Agent builder = new BuildingAgent();
+
+// Poorly placed config values for agents
 int roadServicedDistance = 5;
 int maxExtenderDistance = 10;
 int connectorDistance = 10;
+int maxDistanceFromDevelopment = 20;
+int builderSearchDistance = 3;
 
+// Used to toggle updating of agents
 boolean extend = true;
-boolean multipleAgents = true;
+
+// When false, only one agent of each type will run at once
+boolean multipleAgents = false;
 
 // No enums in processing
 public static final int EMPTY = 0;
@@ -51,7 +64,7 @@ void setup() {
   buildings.get(buildings.size() - 1).setPos(2, 20);
 
   // Road seed point
-  world[int(cols / 2)][int(rows / 2)] = ROAD;
+  world[startX][startY] = ROAD;
 }
 
 void drawGrid() {
@@ -96,12 +109,13 @@ void drawWorld() {
         int y = j*gridScale;
 
         if (world[i][j] == ROAD) {
-          fill(0);
           stroke(0, 40);
+          fill(0);
         } 
         else if (world[i][j] == BUILDING) {
-          fill(255, 200, 200);
-          stroke(0, 80);
+          stroke(0);
+
+          fill(255, 165, 0);
         }
 
         rect(x, y, gridScale, gridScale);
@@ -132,5 +146,7 @@ void draw() {
       connector4.update();
     }
   }
+
+  builder.update();
 }
 
