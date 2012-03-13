@@ -4,6 +4,20 @@ abstract class Agent {
   // Store list of possible directions an agent could move  
   ArrayList<PVector> directions = new ArrayList<PVector>();
 
+  // Count how any pixels of road are in the square surrounding
+  protected int roadCountInRange(int squareRadius) {
+    int count = 0;
+    for (int i = -squareRadius; i < squareRadius; i++) {
+      for (int j = -squareRadius; j < squareRadius; j++) {
+        if (validWorldCoordinates( i + xPos, j + yPos) &&
+          world[i + xPos][j + yPos] == ROAD) {
+          count++;
+        }
+      }
+    }
+
+    return count;
+  }
 
   protected boolean validWorldCoordinates(int x, int y) {
     if (x > 0 && x < cols && y > 0 && y < rows) {
@@ -88,8 +102,6 @@ class ConnectorAgent extends Agent {
         path = s.BFS(xPos, yPos, int(nearby.x), int(nearby.y));
         addRoad(path);
       }
-      //println("dist: " + worldDist);
-      //if(path != null) { println("pathdist: " + path.size()); }
     }
 
     fill(255, 0, 0);
@@ -106,26 +118,12 @@ class ConnectorAgent extends Agent {
 }
 
 class ExtenderAgent extends Agent {
-  // Count how any pixels of road are in the square surrounding
-  private int roadCountInRange(int squareRadius) {
-    int count = 0;
-    for (int i = -squareRadius; i < squareRadius; i++) {
-      for (int j = -squareRadius; j < squareRadius; j++) {
-        if (validWorldCoordinates( i + xPos, j + yPos) &&
-          world[i + xPos][j + yPos] == ROAD) {
-          count++;
-        }
-      }
-    }
-
-    return count;
-  }
-
   private boolean tooFar(int x, int y) {
     Search s = new FindNearestDevelopment();
 
     ArrayList<PVector> path = s.BFS(x, y, 0, 0);
-    //println(path);
+    
+    // Don't let extender stray too far from development
     if (path == null) {
       return sqrt(sq(x - startX) + sq(y - startY)) > maxDistanceFromDevelopment;
     } 
@@ -141,6 +139,14 @@ class ExtenderAgent extends Agent {
 
     if (roadCountInRange(maxExtenderDistance) > 3) {
       return false;
+    }
+
+    for (PVector p : path) {
+      Search s = new FindNearestDevelopment();
+      ArrayList<PVector> pathToDevelopment = s.BFS(int(p.x), int(p.y), 0, 0);
+      if (pathToDevelopment != null && pathToDevelopment.size() < 2) {
+        return false;
+      }
     }
 
     return true;
@@ -181,17 +187,14 @@ class BuildingAgent extends Agent {
     ArrayList<PVector> buildingPieces = new ArrayList<PVector>();
     buildingPieces.add(startPos);
 
-    //    PVector topRight = new PVector(1, 1);
-    //    PVector topLeft = new PVector(-1, 1);
-    //    PVector bottomRight = new PVector(1, -1);
-    //    PVector bottomLeft = new PVector(-1, -1);
     ArrayList<PVector> dirs = new ArrayList<PVector>();
     dirs.add(new PVector(1, 1));
     dirs.add(new PVector(-1, 1));
     dirs.add(new PVector(1, -1));
     dirs.add(new PVector(-1, -1));
 
-    Search s = new FindNearestDevelopment();
+    Search developmentSearch = new FindNearestDevelopment();
+    Search roadSearch = new FindNearestRoad();
 
     // Expand on random edges until building is sufficiently large
     while (buildingPieces.size () < 10 && dirs.size() > 1) {
@@ -203,21 +206,25 @@ class BuildingAgent extends Agent {
       Collections.shuffle(dirs);      
       PVector d = dirs.get(0);
 
-
       // For each piece in the building, try to see if the neighbor in this direction is 
       for (PVector p : buildingPieces) {
         PVector temp = new PVector(p.x, p.y);
         temp.add(d);
-        //println("p: " + p);
-        //println("temp: " + temp);
 
+        // Completely skip if this is already in the building we are expanding
         if (!buildingPieces.contains(temp)) {
+          // If it's not in our building, make sure it's valid
           if (validWorldCoordinates(int(temp.x), int(temp.y)) &&
             world[int(temp.x)][int(temp.y)] != ROAD &&
             world[int(temp.x)][int(temp.y)] != BUILDING) {
-            ArrayList<PVector> path = s.BFS(int(temp.x), int(temp.y), 0, 0);
-            println(path);
-            if (path == null || (path.size() > 3 || buildingPieces.contains(path.get(path.size() - 1)))) {
+            ArrayList<PVector> developmentPath = developmentSearch.BFS(int(temp.x), int(temp.y), 0, 0);
+            ArrayList<PVector> roadPath = roadSearch.BFS(int(temp.x), int(temp.y), 0, 0);
+
+            // Now make sure that the path is either null or we are sufficiently far away from another building or road
+            // if we find a building piece close by, it could just be our current building
+            if ((developmentPath == null || 
+                (developmentPath.size() > 3 || buildingPieces.contains(developmentPath.get(developmentPath.size() - 1)))) &&
+                 roadPath.size() > 2) {
               newPieces.add(temp);
             } 
             else {
@@ -237,8 +244,6 @@ class BuildingAgent extends Agent {
         buildingPieces.addAll(newPieces);
       }
     }
-
-    println("returning: " + buildingPieces.size() + " pieces");
 
     return buildingPieces;
   }
@@ -276,10 +281,10 @@ class BuildingAgent extends Agent {
     }
     Collections.shuffle(nearbyLand);
 
+    // Ask for building suggestion(s?) and determine if we should use it
     if (!nearbyLand.isEmpty()) {
       ArrayList<PVector> building = suggestBuilding(nearbyLand.get(0));
-      if (building.size() > 2) {
-        //random(0, 1) > .95) {
+      if (building.size() > 3 && roadCountInRange(cols) > 10 && random(0,1) > .75) {
         addBuildingToWorld(building);
       }
     }

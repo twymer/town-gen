@@ -129,6 +129,7 @@ void keyPressed() {
 }
 
 void draw() {
+  println(frameRate);
   background(255);
   // This method is very framerate intensive
   //drawGrid();
@@ -138,6 +139,8 @@ void draw() {
   if (extend) {
     extender.update();
     connector.update();
+    builder.update();
+
     if (multipleAgents) {
       extender2.update();
       extender3.update();
@@ -146,7 +149,5 @@ void draw() {
       connector4.update();
     }
   }
-
-  builder.update();
 }
 

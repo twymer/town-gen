@@ -1,3 +1,5 @@
+// Abstract search class can be extended and logic added for valid neighbors and goal conditions 
+// to able to support a wide variety of needs in this project
 abstract class Search {
   // Flag to disable drawing of BFS
   private boolean drawSearch = false;
@@ -28,7 +30,6 @@ abstract class Search {
     openNodes.add(current);
 
     while (openNodes.size () > 0) {
-      //println("size: " + openNodes.size());
       current = openNodes.remove(0);
       openSet.remove(current.pos);
       closedSet.add(current.pos);
@@ -74,7 +75,6 @@ class FindViaRoads extends Search {
   }
 
   boolean validNeighbor(PVector potentialNeighbor) {
-    //println(world[int(potentialNeighbor.x)][int(potentialNeighbor.y)]);
     return world[int(potentialNeighbor.x)][int(potentialNeighbor.y)] == ROAD;
   }
 }
