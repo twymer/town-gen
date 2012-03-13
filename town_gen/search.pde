@@ -1,9 +1,8 @@
 // Abstract search class can be extended and logic added for valid neighbors and goal conditions 
 // to able to support a wide variety of needs in this project
 abstract class Search {
-  // Flag to disable drawing of BFS
-  private boolean drawSearch = false;
-
+  abstract boolean drawSearch();
+  
   private ArrayList<PVector> tracePath(Node finalNode) {
     ArrayList<PVector> path = new ArrayList<PVector>();
 
@@ -40,7 +39,7 @@ abstract class Search {
 
       for (PVector neighbor : current.neighbors()) {
         if (!openSet.contains(neighbor) && !closedSet.contains(neighbor) && validNeighbor(neighbor)) {
-          if (drawSearch) {
+          if (drawSearch()) {
             fill(0, 255, 0, 50);
             stroke(0);
             drawBox(neighbor);
@@ -60,6 +59,10 @@ abstract class Search {
 }
 
 class FindNearestRoad extends Search {
+  boolean drawSearch() {
+    return true;
+  }
+
   boolean goalReached(Node current, PVector goal) {
     return world[int(current.pos.x)][int(current.pos.y)] == ROAD;
   }
@@ -70,6 +73,10 @@ class FindNearestRoad extends Search {
 }
 
 class FindViaRoads extends Search {
+  boolean drawSearch() {
+    return true;
+  }
+
   boolean goalReached(Node current, PVector goal) {
     return current.pos.x == goal.x && current.pos.y == goal.y;
   }
@@ -80,6 +87,10 @@ class FindViaRoads extends Search {
 }
 
 class FindGoal extends Search {
+  boolean drawSearch() {
+    return true;
+  }
+
   boolean goalReached(Node current, PVector goal) {
     return current.pos.x == goal.x && current.pos.y == goal.y;
   }
@@ -90,6 +101,10 @@ class FindGoal extends Search {
 }
 
 class FindNearestDevelopment extends Search {
+  boolean drawSearch() {
+    return false;
+  }
+  
   boolean goalReached(Node current, PVector goal) {
     return world[int(current.pos.x)][int(current.pos.y)] == BUILDING;
   }
@@ -98,4 +113,5 @@ class FindNearestDevelopment extends Search {
     return true;
   }
 }
+
 

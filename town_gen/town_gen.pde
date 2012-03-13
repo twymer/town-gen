@@ -31,7 +31,7 @@ int builderSearchDistance = 3;
 boolean extend = true;
 
 // When false, only one agent of each type will run at once
-boolean multipleAgents = false;
+boolean multipleAgents = true;
 
 // No enums in processing
 public static final int EMPTY = 0;
@@ -45,7 +45,7 @@ void addRoad(ArrayList<PVector> path) {
 }
 
 void setup() {
-  frameRate(60);
+  frameRate(600);
   size(cols * gridScale, rows * gridScale);
 
   for (int i = 0; i < cols; i++) {
@@ -108,7 +108,6 @@ void keyPressed() {
 }
 
 void draw() {
-  println(frameRate);
   background(255);
   // This method is very framerate intensive
   //drawGrid();
