@@ -7,7 +7,6 @@ int rows = 100;
 int startX = int(cols / 2);
 int startY = int(rows / 2);
 
-ArrayList<Building> buildings;
 int world[][] = new int[cols][rows];
 
 Agent extender = new ExtenderAgent();
@@ -55,14 +54,6 @@ void setup() {
     }
   }
 
-  buildings = new ArrayList<Building>();
-  buildings.add(new Building("Armory", 4, 4, 1, .5));
-  buildings.get(buildings.size() - 1).setPos(2, 2);
-  buildings.add(new Building("Alchemist", 3, 3, 1, .2));
-  buildings.get(buildings.size() - 1).setPos(20, 2);
-  buildings.add(new Building("General Store", 3, 3, .8, 1));
-  buildings.get(buildings.size() - 1).setPos(2, 20);
-
   // Road seed point
   world[startX][startY] = ROAD;
 }
@@ -87,18 +78,6 @@ void drawBox(int x, int y) {
 
 void drawBox(PVector pos) {
   drawBox(int(pos.x), int(pos.y));
-}
-
-void drawBuilding(Building b) {
-  fill(0);
-  noStroke();
-  rect(b.xPos * gridScale, b.yPos * gridScale, b.xSize * gridScale, b.ySize * gridScale);
-}
-
-void drawBuildings() {
-  for (Building b : buildings) {
-    drawBuilding(b);
-  }
 }
 
 void drawWorld() {
