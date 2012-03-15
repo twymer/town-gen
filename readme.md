@@ -44,3 +44,15 @@ Controls
 
 * E - Toggle world growth agents on/off.
 * P - Turn on print view, disables all agents.
+
+Images
+------
+
+While running, the agents can be seen doing their work:
+
+![Agents running](http://dl.dropbox.com/u/2327743/788/town/final/town-with-agents.jpeg)
+
+
+After running, the output looks like: 
+
+![Post process](http://dl.dropbox.com/u/2327743/788/town/final/town-post-process.jpeg)
