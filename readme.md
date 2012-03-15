@@ -38,3 +38,9 @@ Running the application
 Processing is available on most platforms at [processing.org](http://processing.org/).
 
 Open town_gen.pde in Processing and hit run.
+
+Controls
+--------
+
+* E - Toggle world growth agents on/off.
+* P - Turn on print view, disables all agents.

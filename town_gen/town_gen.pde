@@ -20,6 +20,10 @@ Agent connector4 = new ConnectorAgent();
 
 Agent builder = new BuildingAgent();
 
+// Used for saving an image
+ArrayList<RoadSegment> roads = new ArrayList<RoadSegment>();
+ArrayList<Building> buildings = new ArrayList<Building>();
+
 // Poorly placed config values for agents
 int roadServicedDistance = 5;
 int maxExtenderDistance = 10;
@@ -30,6 +34,9 @@ int builderSearchDistance = 3;
 // Used to toggle updating of agents
 boolean extend = true;
 
+// Used to do post execution drawing
+boolean prettyDraw = false;
+
 // When false, only one agent of each type will run at once
 boolean multipleAgents = true;
 
@@ -39,9 +46,12 @@ public static final int ROAD = 1;
 public static final int BUILDING = 2;
 
 void addRoad(ArrayList<PVector> path) {
+  ArrayList<PVector> road = new ArrayList<PVector>();
   for (PVector p : path) {
     world[int(p.x)][int(p.y)] = ROAD;
+    road.add(p);
   }
+  roads.add(new RoadSegment(road));
 }
 
 void setup() {
@@ -104,7 +114,12 @@ void drawWorld() {
 }
 
 void keyPressed() {
-  extend = !extend;
+  if (key == 'e' || key == 'E') {
+    extend = !extend;
+  } else if(key == 'p' || key == 'P') {
+    extend = false;
+    prettyDraw = true;
+  }
 }
 
 void draw() {
@@ -112,7 +127,17 @@ void draw() {
   // This method is very framerate intensive
   //drawGrid();
 
-  drawWorld();
+  if(prettyDraw) {
+    for(RoadSegment rs : roads) {
+      rs.drawSegment();
+    }
+    
+    for(Building b : buildings) {
+      b.drawBuilding();
+    }
+  } else {
+    drawWorld();
+  }
 
   if (extend) {
     extender.update();

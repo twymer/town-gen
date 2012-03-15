@@ -74,7 +74,7 @@ class FindNearestRoad extends Search {
 
 class FindViaRoads extends Search {
   boolean drawSearch() {
-    return true;
+    return false;
   }
 
   boolean goalReached(Node current, PVector goal) {
@@ -88,7 +88,7 @@ class FindViaRoads extends Search {
 
 class FindGoal extends Search {
   boolean drawSearch() {
-    return true;
+    return false;
   }
 
   boolean goalReached(Node current, PVector goal) {
@@ -101,6 +101,7 @@ class FindGoal extends Search {
 }
 
 class FindNearestDevelopment extends Search {
+  // This starts out searching the whole map, this draw is very expensive
   boolean drawSearch() {
     return false;
   }
